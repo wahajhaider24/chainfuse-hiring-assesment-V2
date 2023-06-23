@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Web3.js Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+  <script>
+    // Check if Web3 is already injected by the browser (Mist/MetaMask)
+    if (typeof web3 !== 'undefined') {
+      web3 = new Web3(web3.currentProvider);
+    } else {
+      // Set a default provider (e.g., Infura)
+      web3 = new Web3(window.ethereum);
+    }
+
+
+
+    const signMessage = async () => {
+      const message = 'Hello';
+      try {
+        const signature = await web3.eth.personal.sign(message, window.walletAddress, '');
+        console.log('Signature:', signature);
+        alert('Message signed successfully! Check the browser console for the signature.');
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error signing the message. Check the browser console for details.');
+      }
+    };
+
+    const connectWallet = async () => {
+      try {
+        // Request account access if needed
+        await window.ethereum.enable();
+        // Refresh the page to reflect the connected wallet address
+        location.reload();
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error connecting the wallet. Check the browser console for details.');
+      }
+    };
+
+    window.addEventListener('load', async () => {
+    
+
+      // Display the connected wallet address
+      const accounts = await web3.eth.getAccounts();
+      const walletAddressElement = document.getElementById('wallet-address');
+      window.walletAddress=accounts[0];
+      walletAddressElement.textContent = accounts[0];
+
+      // Attach sign button click event
+      const signButton = document.getElementById('sign-button');
+      signButton.addEventListener('click', signMessage);
+
+      // Attach connect wallet button click event
+      const connectWalletButton = document.getElementById('connect-wallet-button');
+      connectWalletButton.addEventListener('click', connectWallet);
+    });
+  </script>
+</head>
+<body>
+  <h1>Web3.js Example</h1>
+  <p>Connected Wallet Address: <span id="wallet-address"></span></p>
+  <button id="sign-button">Sign Message</button>
+  <button id="connect-wallet-button">Connect Wallet</button>
+</body>
+</html>
